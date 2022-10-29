@@ -36,14 +36,19 @@ export default class Order {
       throw new Error("Items are required");
     }
 
-    if (this._items.some((item) => item.quantity <= 0)) {
-      throw new Error("Quantity must be greater than 0");
-    }
-
     return true;
   }
 
   total(): number {
-    return this._items.reduce((acc, item) => acc + item.price, 0);
+    return this._items.reduce((acc, item) => acc + item.total, 0);
   }
+
+  /*
+  updateOrderItem(updateItem: OrderItem) {
+    console.log(this._items)
+    const updatedItems = this._items.map((item) => (updateItem.id == updateItem.id) ? updateItem : item );
+    this._items = updatedItems
+    console.log(this._items)
+  }
+  */
 }

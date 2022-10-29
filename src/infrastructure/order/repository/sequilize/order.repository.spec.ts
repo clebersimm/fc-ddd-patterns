@@ -113,6 +113,7 @@ describe("Order repository test", () => {
     await orderRepository.create(order);
     const ordersList = await orderRepository.findAll()
     expect(ordersList.length).toBe(1)
+    expect(ordersList[0]).toStrictEqual(order)
   })
 
   it("should find an order ", async () => {
@@ -139,9 +140,36 @@ describe("Order repository test", () => {
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
 
-    const orderResult =  await orderRepository.find(order.id)
+    const orderResult = await orderRepository.find(order.id)
     expect(orderResult).toStrictEqual(order)
   })
 
+  it("should update an order", async () => {
+    const customerRepository = new CustomerRepository();
+    const customer = new Customer("123", "Customer 1");
+    const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
+    customer.changeAddress(address);
+    await customerRepository.create(customer);
+    const productRepository = new ProductRepository();
+    const product = new Product("123", "Product 1", 10);
+    await productRepository.create(product);
+    const ordemItem = new OrderItem(
+      "1",
+      product.name,
+      product.price,
+      product.id,
+      1
+    );
+    const order = new Order("123", "123", [ordemItem]);
+    const orderRepository = new OrderRepository();
+    await orderRepository.create(order);
+    const orderResult = await orderRepository.find(order.id)
+    expect(orderResult).toStrictEqual(order)
+    const orderItemForUpdate = orderResult.items[0];
+    orderItemForUpdate.changeQuantity(5)
+    await orderRepository.update(orderResult);
+    const orderResult2 = await orderRepository.find(orderResult.id)
+    expect(orderResult2.total()).toBe(50)
+  })
 
 });
